@@ -13,7 +13,13 @@ router.register('registro', RegistroViewSet, basename='Registro')
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(router.urls)),
-    path('login/', LoginView.as_view(), name='login'),
     path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('login/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('registro/login/', LoginView.as_view(), name='login_page'),
 ]
+
+'''
+path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+path('login/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+path('registro/login/', LoginView.as_view(), name='login_page'),
+'''
