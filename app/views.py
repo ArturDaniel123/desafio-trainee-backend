@@ -1,10 +1,8 @@
-from django.http import JsonResponse
+from app.models import Cardapio
+from app.serializers import CardapioSerializer
+from rest_framework import viewsets
 
 
-def Pratos(request):
-    if request.method == 'GET':
-        prato = {
-            'id': '1',
-            'nome': 'lais',
-        }
-        return JsonResponse(prato)
+class CardapioViewSet(viewsets.ModelViewSet):
+    queryset = Cardapio.objects.all()
+    serializer_class = CardapioSerializer
