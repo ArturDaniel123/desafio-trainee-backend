@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 
 class Cardapio(models.Model):
@@ -11,6 +12,14 @@ class Cardapio(models.Model):
         return self.prato
 
 
-'''
-EXISTE UM EMAILFIELD PARA QUANDO EU FOR CRIAR O CADASTRO
-'''
+class Pedido(models.Model):
+    cliente = models.ForeignKey(User, on_delete=models.CASCADE)
+    data = models.DateTimeField(auto_now_add=True)
+    finalizado = models.BooleanField(default=False)
+
+
+class ItemPedido(models.Model):
+    pedido = models.ForeignKey(
+        Pedido, related_name='itens', on_delete=models.CASCADE)
+    prato = models.ForeignKey('Cardapio', on_delete=models.CASCADE)
+    quantidade = models.PositiveIntegerField()
