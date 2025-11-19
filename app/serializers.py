@@ -8,6 +8,12 @@ class CardapioSerializer(serializers.ModelSerializer):
         model = Cardapio
         fields = ['id', 'prato', 'preco', 'estoque', 'disponibilidade']
 
+    def validate_prato(self, value):
+        if Cardapio.objects.filter(prato__iexact=value).exists():
+            raise serializers.ValidationError(
+                "Já existe um prato com esse nome.")
+        return value
+
 
 class RegistroSerializer(serializers.ModelSerializer):
     class Meta:

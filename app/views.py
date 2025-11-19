@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from rest_framework.authentication import BasicAuthentication
-from rest_framework import mixins
+from rest_framework import mixins, serializers
 from django.utils.dateparse import parse_datetime
 from rest_framework.decorators import api_view, permission_classes
 from django.db.models import Sum
@@ -146,3 +146,8 @@ def faturamento(request):
         "periodo": f"{data_inicio} a {data_fim}",
         "pedidos_considerados": pedidos.count()
     })
+
+
+class AdicionarItemSerializer(serializers.Serializer):
+    prato = serializers.CharField()
+    quantidade = serializers.IntegerField()
