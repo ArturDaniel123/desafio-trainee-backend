@@ -12,7 +12,8 @@ from rest_framework.authentication import BasicAuthentication
 from rest_framework import mixins
 from django.utils.dateparse import parse_datetime
 from rest_framework.decorators import api_view, permission_classes
-from django.db.models import Sum   # <-- FALTAVA ISSO
+from django.db.models import Sum
+from rest_framework.viewsets import ModelViewSet
 
 
 class CardapioViewSet(viewsets.ModelViewSet):
@@ -25,7 +26,7 @@ class CardapioViewSet(viewsets.ModelViewSet):
         return [IsAdminUser()]
 
 
-class RegistroViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
+class RegistroViewSet(ModelViewSet):
     queryset = User.objects.all()
     serializer_class = RegistroSerializer
     permission_classes = [AllowAny]
