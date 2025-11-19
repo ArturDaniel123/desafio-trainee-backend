@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 
 
 class Cardapio(models.Model):
-    prato = models.CharField(max_length=100)
+    prato = models.CharField(max_length=100, unique=True)
     preco = models.DecimalField(max_digits=6, decimal_places=2)
     estoque = models.PositiveIntegerField()
     disponibilidade = models.BooleanField(default=True)
