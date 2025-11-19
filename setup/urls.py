@@ -17,4 +17,5 @@ urlpatterns = [
     path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('login/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('faturamento/', faturamento, name='faturamento'),
+    path('api-auth/', include('rest_framework.urls'))
 ]
