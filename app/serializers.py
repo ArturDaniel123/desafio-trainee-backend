@@ -25,6 +25,10 @@ class RegistroSerializer(serializers.ModelSerializer):
 
 
 class ItemPedidoSerializer(serializers.ModelSerializer):
+    prato = serializers.SlugRelatedField(
+        slug_field='prato',              # vai buscar o Cardapio pelo nome
+        queryset=Cardapio.objects.all()  # habilita escrita (não apenas leitura)
+    )
     prato_nome = serializers.CharField(source='prato.prato', read_only=True)
 
     class Meta:
@@ -41,6 +45,9 @@ class PedidoSerializer(serializers.ModelSerializer):
         model = Pedido
         fields = ['id', 'cliente', 'data', 'finalizado',
                   'itens', 'total_itens', 'total_valor']
+
+    def get_total_itens(self, obj):
+        return sum(item.quantidade for item in obj.itens.all())
 
     def get_total_valor(self, obj):
         return sum(item.quantidade * item.prato.preco for item in obj.itens.all())
