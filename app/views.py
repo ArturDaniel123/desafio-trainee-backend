@@ -1,6 +1,6 @@
 from app.models import Cardapio, Pedido, ItemPedido
 from app.serializers import CardapioSerializer, PedidoSerializer, ItemPedidoSerializer
-from rest_framework import viewsets, status, permissions
+from rest_framework import viewsets, status, permissions, filters
 from django.contrib.auth.models import User
 from app.serializers import RegistroSerializer
 from rest_framework.response import Response
@@ -14,6 +14,7 @@ from django.utils.dateparse import parse_datetime
 from rest_framework.decorators import api_view, permission_classes
 from django.db.models import Sum
 from rest_framework.viewsets import ModelViewSet
+from django_filters.rest_framework import DjangoFilterBackend
 
 
 class CardapioViewSet(viewsets.ModelViewSet):
