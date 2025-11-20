@@ -1,14 +1,16 @@
 from rest_framework import serializers
-from app.models import Cardapio, Pedido, ItemPedido
+from app.models import Cardapio, Pedido, ItemPedido, MetodoPagamento
 from django.contrib.auth.models import User
 
 
 class CardapioSerializer(serializers.ModelSerializer):
+    '''Serializador do cardápio'''
     class Meta:
         model = Cardapio
         fields = ['id', 'prato', 'preco', 'estoque', 'disponibilidade']
 
     def validate_prato(self, value):
+        '''Impede pratos com mesmo nome'''
         if Cardapio.objects.filter(prato__iexact=value).exists():
             raise serializers.ValidationError(
                 "Já existe um prato com esse nome.")
@@ -16,17 +18,20 @@ class CardapioSerializer(serializers.ModelSerializer):
 
 
 class RegistroSerializer(serializers.ModelSerializer):
+    '''Serializador para criação de usuários'''
     class Meta:
         model = User
         fields = ['id', 'username', 'email', 'password']
         extra_kwargs = {'password': {'write_only': True}}
 
     def validate_email(self, value):
+        '''Impede e-mails repetidos'''
         if User.objects.filter(email__iexact=value).exists():
             raise serializers.ValidationError("Este e-mail já está em uso.")
         return value
 
     def create(self, validated_data):
+        '''Criação segura do usuário com hash de senha'''
         user = User.objects.create_user(
             username=validated_data['username'],
             email=validated_data.get('email'),
@@ -62,3 +67,9 @@ class PedidoSerializer(serializers.ModelSerializer):
 
     def get_total_valor(self, obj):
         return sum(item.quantidade * item.prato.preco for item in obj.itens.all())
+
+
+class MetodoPagamentoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MetodoPagamento
+        fields = '__all__'

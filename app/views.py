@@ -15,22 +15,31 @@ from rest_framework.decorators import api_view, permission_classes
 from django.db.models import Sum
 from rest_framework.viewsets import ModelViewSet
 from django_filters.rest_framework import DjangoFilterBackend
+from .models import Cardapio, MetodoPagamento
+from .serializers import CardapioSerializer, MetodoPagamentoSerializer
 
 
 class CardapioViewSet(viewsets.ModelViewSet):
+    '''Viewset do cardápio'''
     queryset = Cardapio.objects.all()
     serializer_class = CardapioSerializer
 
+    # Permite busca pelo nome do prato
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+
+    search_fields = ['prato']
+
     def get_permissions(self):
         if self.action in ['list', 'retrieve']:
-            return [IsAuthenticated()]
+            return [AllowAny()]
         return [IsAdminUser()]
 
 
 class RegistroViewSet(ModelViewSet):
+    '''Registro de usuários'''
     queryset = User.objects.all()
     serializer_class = RegistroSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [AllowAny()]  # Todos podem criar conta
 
     @action(detail=False, methods=['get'])
     def teste(self, request):
@@ -48,9 +57,10 @@ class RegistroViewSet(ModelViewSet):
 
 
 class PedidoViewSet(viewsets.ModelViewSet):
+    '''Pedidos'''
     queryset = Pedido.objects.all()
     serializer_class = PedidoSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]  # Apenas usuários logados
 
     def get_queryset(self):
         user = self.request.user
@@ -61,9 +71,6 @@ class PedidoViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(cliente=self.request.user)
 
-    # ---------------------------
-    #  ADICIONAR ITEM AO PEDIDO
-    # ---------------------------
     @action(detail=True, methods=['post'])
     def adicionar_item(self, request, pk=None):
         pedido = self.get_object()
@@ -96,9 +103,6 @@ class PedidoViewSet(viewsets.ModelViewSet):
 
         return Response({'mensagem': f'{quantidade} x {prato.prato} adicionado ao pedido.'})
 
-    # ---------------------------
-    #  FINALIZAR O PEDIDO
-    # ---------------------------
     @action(detail=True, methods=['post'])
     def finalizar(self, request, pk=None):
         pedido = self.get_object()
@@ -119,8 +123,6 @@ class PedidoViewSet(viewsets.ModelViewSet):
         pedido.save()
 
         return Response({'mensagem': 'Pedido finalizado com sucesso!'})
-
-    # (OPCIONAL) faturamento dentro do ViewSet para ADM
 
 
 @api_view(['GET'])
@@ -152,3 +154,14 @@ def faturamento(request):
 class AdicionarItemSerializer(serializers.Serializer):
     prato = serializers.CharField()
     quantidade = serializers.IntegerField()
+
+
+class MetodoPagamentoViewSet(viewsets.ModelViewSet):
+    '''Métodos de pagamento'''
+    queryset = MetodoPagamento.objects.all()
+    serializer_class = MetodoPagamentoSerializer
+
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve']:
+            return [IsAuthenticated()]
+        return [IsAdminUser()]
